@@ -27,30 +27,39 @@ For this part of the assignment, you can ignore the missing values in the datase
 
 ```r
 sum_by_day<-aggregate(rawDataset$steps, by = list(rawDataset$date), sum, na.rm=TRUE)
-hist(sum_by_day$x, breaks = 10)
+hist(sum_by_day$x, breaks = 10, xlab="Total Number of steps per day", main="Histogram of Total steps per day", col="lightskyblue")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
-Calculate and report the mean and median of the total number of steps taken per day
+2. Calculate and report the mean and median of the total number of steps taken per day
 
 ```r
 total_mean<-mean(sum_by_day$x)
 total_median<-median(sum_by_day$x)
 ```
-the value of mean by days is: 9354
-the value of the median by days is : 10395 
+
+|Measurement|Value|
+|-----------|-----|
+|Mean|9354|
+|Median|10395|
+
 
 ## What is the average daily activity pattern?
 
+1. Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+
 ```r
 mean_by_interval<-aggregate(rawDataset$steps, by = list(rawDataset$interval), mean, na.rm=TRUE)
-plot(mean_by_interval, type='l')
+plot(mean_by_interval, type='l', main="Mean Daily Pattern", xlab="Interval", ylab=" mean steps")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 The interval with the maximum mean steps is:
+
 
 ```r
 subset(mean_by_interval,x==max(x))[1,1]
@@ -82,32 +91,40 @@ sum(is.na(filled_dataset))
 ```
 ## [1] 0
 ```
-Create a new dataset that is equal to the original dataset but with the missing data filled in.
-Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+3. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
+
 
 ```r
 sum_by_day_filled<-aggregate(filled_dataset$steps, by = list(filled_dataset$date), sum, na.rm=TRUE)
-hist(sum_by_day_filled$x, breaks = 10)
+hist(sum_by_day_filled$x, breaks = 10, xlab="Total Number of steps per day", main="Histogram of Total steps per day with filled NAs", col="lightskyblue")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
+4. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
 
 ```r
 total_mean<-mean(sum_by_day_filled$x)
 total_median<-median(sum_by_day_filled$x)
 ```
-the value of mean by days is: 10749
-the value of the median by days is : 10641
+|Measurement|Value|
+|-----------|-----|
+|Mean|10749|
+|Median|10641|
+
+Compared with the previous mean and median, due to the estimation of NAs values the mean and median values have now a more similar values than the previous dataset without NA values. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 
 ```r
-filled_dataset['day_type']<-NA
-filled_dataset$day_type<-apply(filled_dataset,1,function(x){if (weekdays(as.Date(x[2])) %in% c('sábado','domingo')){x[4]='weekEnd'} else {x[4]='weekDay'}})
+filled_dataset['day_type']<-apply(filled_dataset,1,function(x){if (weekdays(as.Date(x[2])) %in% c('sábado','domingo')){x[4]='weekEnd'} else {x[4]='weekDay'}})
 ```
 Make a panel plot containing a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+
 
 ```r
 library(lattice)
@@ -121,3 +138,7 @@ xyplot(x~Group.1|Group.2, data = mean_by_interval_and_days,
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+According to the results the studies user normally get up early in the week days ( around 5am) and have a peak of activity around 8.30am. This peak could be produced by a morning walk to the work. In week days between 9am and 6pm aprroximatelly the pattern is quite stable probabbly is a pattern derived from a non physical work. After 6pm in week days the user has and activty increase, probably due to return to home.
+
+On the contrary, on weekend the user starts the day in a more quite way around 6am or 7 am. In the same way as week days around 8.30 appear a peak but is not bigger than the peak at week days. On the other hand along the day the pattern is more random than the week day. This could be derived from a more active and luisure activities during the weekend days. Finally the time to go bed in weekend days is later than the week days. 
